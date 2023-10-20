@@ -1,11 +1,11 @@
 import { useState } from "react";
 import {  useNavigate, useParams} from 'react-router-dom';
-import useApiUpdate from "./updateapi";
 
+
+import './update.css'; 
+import { useApi } from "./fetchapi";
 const Update =()=>{
     
-
-
     const { item } = useParams();
     const selectedItem = JSON.parse(decodeURIComponent(item));
     const navigate = useNavigate()
@@ -16,9 +16,8 @@ const Update =()=>{
     const [status, setstatus] = useState(selectedItem.status)
 
 
-    const apiUrl = `https://gorest.co.in/public/v2/users/${selectedItem.id}`;
-    const authToken = '9b24d96d3a87920f101218d1cb70376a5f0c51e16a1bbb836dd15a9cf2b67026';
-    const { updateData, updateloading, updateerror } = useApiUpdate();
+
+    const { updateData, updateloading, updateerror } = useApi();
 
     const nameHandler=(event)=>{
         setname(event.target.value)
@@ -29,6 +28,9 @@ const Update =()=>{
    
     const submitHandler = (event) => {
         event.preventDefault(); 
+        let iid=selectedItem.id;
+        console.log(iid);
+
         const expenseData = {
           id:selectedItem.id,  
           name: name,
@@ -37,31 +39,40 @@ const Update =()=>{
           status:status,
         };
 
-        updateData(apiUrl, authToken, expenseData);
+        updateData(iid,expenseData);
         console.log(expenseData)
         setname("")
         setemail("")
         setgender("")
         setstatus("")
-        setTimeout(()=>navigate("/",200),3000)
+
+        if (updateloading) {
+            return <div>Loading...</div>;
+        }
+        if (updateerror) {
+            console.log(updateerror.message);
+            return <div>Error fetching data: {updateerror.message}</div>;
+            
+        }
+        if(!updateloading)
+        {
+        setTimeout(()=>navigate("/",200))
+        }
 
     }
 
-    if (updateloading) {
-        return <div>Loading...</div>;
-      }
-
-    
-      if (updateerror) {
-        return <div>Error fetching data: {updateerror.message}</div>;
-      }
-    
+   
    
     return (
 
         <>
 
         <div className="main ">
+        <div class="zoom-in-container">
+        <p class="zoom-in-text "><h1 class="gradient-text">Update Data Here</h1></p>
+        </div>
+        
+        
         <form onSubmit={submitHandler}>
             <div className="input">
                <div className='input1'>
@@ -72,7 +83,7 @@ const Update =()=>{
                    <label>email   :</label>
                    <input type="email"  defaultValue={email} className="num" onChange={emailHandler}/>
                </div>
-               <div className='input3'>
+               <div className='input4'>
                    <select 
                    value={gender} onChange={(event)=>{
                     setgender(event.target.value);

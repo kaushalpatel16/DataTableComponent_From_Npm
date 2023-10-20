@@ -1,17 +1,16 @@
 import React from "react";
 import DataTable from "react-data-table-component";
 import { Link } from "react-router-dom";
-import useApiDelete from "./deleteapi";
-import useApi from "./fetchapi";
 import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Edit } from "@mui/icons-material";
 import CustomizedDialogs from "./popupforadd";
+import { useApi } from "./fetchapi";
+
 
 const NpmDataTable = () => {
   const apiUrl = "https://gorest.co.in/public/v2/users";
-  const { data, loading, error } = useApi(apiUrl, []);
-  const { deleteData, deleteloading, deleteerror } = useApiDelete();
+  const { data, loading, error, deleteData, deleteloading, deleteerror  } = useApi(apiUrl, []);
   const authToken =
     "9b24d96d3a87920f101218d1cb70376a5f0c51e16a1bbb836dd15a9cf2b67026";
 
@@ -23,9 +22,6 @@ const NpmDataTable = () => {
       deleteData(deleteUrl, authToken);
       console.log(`Delete ID: ${row.id}`);
       console.log(deleteUrl);
-      setTimeout(() => {
-        window.location.reload();
-      }, 500);
     } catch (error) {
       console.error(`Error deleting ID ${row.id}: ${error.message}`);
     }
@@ -84,7 +80,6 @@ const NpmDataTable = () => {
           <Link to={`/Update/${JSON.stringify(row)}`}>
             <Button
               color="success"
-              onClick={() => handleDelete(row)}
               disabled={false}
               size="small"
               variant="contained"
